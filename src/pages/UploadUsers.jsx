@@ -5,12 +5,14 @@ import { membersApi } from '../mocks/mockApi.js';
 import { getMembers, uploadCsv } from '../serviceFunctions/userRelatedFunc.js';
 import { useDispatch } from 'react-redux';
 import { setUsers } from '../redux/slices/dataSlice.js';
+import { useNavigate } from 'react-router-dom';
 
 const UploadUsers = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [previewData, setPreviewData] = useState(null);
   const dispatch=useDispatch();
+  const navigate=useNavigate()
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
@@ -40,7 +42,7 @@ const UploadUsers = () => {
       setPreviewData(null);
       const members=await getMembers()
       dispatch(setUsers(members));
-      
+
     } catch (error) {
       console.error('Upload failed:', error);
     } finally {
@@ -61,9 +63,17 @@ const UploadUsers = () => {
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8">
           {/* File Upload Section */}
           <div className="mb-8">
-            <label htmlFor="file-upload" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-4">
-              Select CSV File
-            </label>
+            <div className='flex flex-row justify-between'>
+              <label htmlFor="file-upload" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-4">
+                Select CSV File
+              </label>
+              <span className='text-2xl text-red-500 font-bold px-3 hover:cursor-pointer'
+              onClick={()=>{
+                navigate("/dashboard");
+              }}
+              >X</span>
+            </div>
+              
             
             <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg hover:border-blue-400 dark:hover:border-blue-500 transition-colors duration-200">
               <div className="space-y-1 text-center">

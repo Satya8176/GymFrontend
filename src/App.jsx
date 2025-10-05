@@ -14,7 +14,7 @@ import CreateRoutine from './pages/CreateRoutine.jsx';
 import CreateExercise from './pages/CreateExercise.jsx';
 import { useDispatch } from 'react-redux';
 import { getAllExercise, getAllRoutine, getMembers } from './serviceFunctions/userRelatedFunc.js';
-import { setAllActiveRoutines, setExercises, setUsers } from './redux/slices/dataSlice.js';
+import { setAllActiveRoutines, setAllExercises, setUsers } from './redux/slices/dataSlice.js';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -34,8 +34,8 @@ function App() {
     const run=async()=>{
       const allMembers=await getMembers() ;
       dispatch(setUsers(allMembers));
-      // const allExercises=await getAllExercise();
-      // dispatch(setExercises(allExercises));
+      const allExercises=await getAllExercise();
+      dispatch(setAllExercises(allExercises));
       // const allActiveRoutine=await getAllRoutine();
       // dispatch(setAllActiveRoutines(allActiveRoutine));
     }

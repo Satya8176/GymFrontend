@@ -14,8 +14,8 @@ export const uploadCsv=async(selectedFile)=>{
             },
           }
         );
-    const result = res.data;
-    console.log("Server response:", result);
+    // const result = res.data;
+    // console.log("Server response:", result);
     // Optionally check for error in result, depending on your API
     if (res.status !== 200) throw new Error(result.message || "Upload failed");
     toast.success("Upload Sucessfull")
@@ -40,16 +40,19 @@ export const getMembers=async()=>{
   }
 }
 
-export const createExercise=async(data)=>{
+export const createExercise=async(body)=>{
   try{
     const res=await axios.post(
       "http://localhost:4000/api/workout/create-exercise",
-      data
+      body
     )
     if (res.status !== 200) throw new Error(res.data?.message || "Create exercise failed");
+    toast.success("Exercises Created");
   }
   catch(err){
-    console.log("Error is ",err);
+    const msg=err?.response?.data?.message ||"Exercise Creation Error"
+    console.log("This is the error",msg);
+    toast.error(msg);;
   }
 }
 

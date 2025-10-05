@@ -2,9 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Dumbbell, Target, Settings } from 'lucide-react';
 import Navbar from '../components/Navbar.jsx';
 import { exercisesApi } from '../mocks/mockApi.js';
+import { createExercise, getAllExercise } from '../serviceFunctions/userRelatedFunc.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { setAllExercises } from '../redux/slices/dataSlice.js';
 
 const CreateExercise = () => {
-  const [exercises, setExercises] = useState([]);
+  const dispatch=useDispatch();
+  const {totalExercies}=useSelector((state)=>state.dataSlice)
+  const [exercises, setExercises] = useState(totalExercies);
+
   const [formData, setFormData] = useState({
     name: '',
     muscleGroup: '',
@@ -21,9 +27,17 @@ const CreateExercise = () => {
     'Barbell', 'Dumbbell', 'Machine', 'Cable', 'Bodyweight', 'Kettlebell', 'Resistance Band', 'Other'
   ];
 
+  console.log("All Exercises",exercises);
   useEffect(() => {
-    loadExercises();
-  }, []);
+    if (!totalExercies || totalExercies.length === 0) {
+      const run=async()=>{
+        const data=await getAllExercise();
+        dispatch(setAllExercises(data))
+        setExercises(data)
+      }
+      run();
+    }
+  }, [totalExercies, dispatch]);
 
   const loadExercises = async () => {
     try {
@@ -46,21 +60,11 @@ const CreateExercise = () => {
     setLoading(true);
     
     try {
-      // console.log("Exercise is",formData)
-      await exercisesApi.create(formData);
-      await loadExercises(); // Refresh the list
+      const res=await createExercise(formData);
+      const exercises=await getAllExercise();
+      dispatch(setAllExercises(exercises));
+      setExercises(exercises);
 
-      // const res = await fetch("http://localhost:4000/api/workout/create-exercise", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(formData),
-      //   });
-      //   if (!res.ok) {
-      //     const errorData = await res.json();
-      //     throw new Error(errorData.message);
-      //   }
       setFormData({
         name: '',
         muscleGroup: '',

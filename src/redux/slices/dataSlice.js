@@ -13,7 +13,7 @@ export const dataSlice=createSlice({
     setUsers(state,value){
       state.totalMembers=value.payload
     },
-    setExercises(state,value){
+    setAllExercises(state,value){
       state.totalExercies=value.payload
     },
     setAllActiveRoutines(state,value){
@@ -22,5 +22,5 @@ export const dataSlice=createSlice({
   }
 })
 
-export const {setAllActiveRoutines,setExercises,setUsers}=dataSlice.actions
+export const {setAllActiveRoutines,setAllExercises,setUsers}=dataSlice.actions
 export default dataSlice.reducer

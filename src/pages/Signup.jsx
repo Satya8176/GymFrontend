@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Form, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Dumbbell, Eye, EyeOff } from 'lucide-react';
 import { authApi } from '../mocks/mockApi.js';
 import ThemeToggle from '../components/ThemeToggle.jsx';
 import toast from 'react-hot-toast';
+import { adminSignUp } from '../serviceFunctions/adminFun.js';
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -13,7 +14,8 @@ const Signup = () => {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    phone:''
   });
   const [loading, setLoading] = useState(false);
 
@@ -39,10 +41,26 @@ const Signup = () => {
 
     setLoading(true);
     try {
-      await authApi.signup(formData);
-      navigate('/dashboard');
+      // const fd=new FormData();
+      // fd.append("name",formData.name)
+      // fd.append("email",formData.email);
+      // fd.append("password",formData.password);
+      // fd.append("cnfpassword",formData.confirmPassword);
+      // fd.append("phone",formData.phone);
+      // const res=await fetch("http://localhost:4000/api/owner/signUp",{
+      //   method:"POST",
+      //   body:fd
+      // })
+      // if (!res.ok) {
+      //     const errorData = await res.json();
+      //     throw new Error(errorData.message);
+      //   }
+      //   toast.success('User SignUp complete');
+        const res=await adminSignUp(formData);
+        navigate("/login")
     } catch (error) {
-      toast.error('Failed to create account');
+      console.log("Error in SingUp")
+      // toast.error('Failed to create account');
     } finally {
       setLoading(false);
     }
@@ -86,8 +104,8 @@ const Signup = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Gym Name
+              <label htmlFor="name" className="block text-sm font-bold text-gray-700 dark:text-gray-100 mb-2">
+                Enter Your Name
               </label>
               <input
                 id="name"
@@ -106,7 +124,7 @@ const Signup = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
             >
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-bold text-gray-700 dark:text-gray-100 mb-2">
                 Email Address
               </label>
               <input
@@ -120,13 +138,32 @@ const Signup = () => {
                 placeholder="Enter your email"
               />
             </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <label htmlFor="phone" className="block text-sm font-bold text-gray-700 dark:text-gray-100 mb-2">
+                Phone Number
+              </label>
+              <input
+                id="phone"
+                name="phone"
+                type="text"
+                required
+                value={formData.phone}
+                onChange={handleChange}
+                className="w-full px-3 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                placeholder="Enter your phone"
+              />
+            </motion.div>
 
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
             >
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-bold text-gray-700 dark:text-gray-100 mb-2">
                 Password
               </label>
               <div className="relative">
@@ -161,7 +198,7 @@ const Signup = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.6 }}
             >
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-bold text-gray-700 dark:text-gray-100 mb-2">
                 Confirm Password
               </label>
               <input
@@ -195,7 +232,7 @@ const Signup = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
             >
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-gray-700 dark:text-gray-200">
                 Already have an account?{' '}
                 <Link
                   to="/login"

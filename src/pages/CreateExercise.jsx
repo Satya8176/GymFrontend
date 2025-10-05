@@ -46,8 +46,21 @@ const CreateExercise = () => {
     setLoading(true);
     
     try {
+      // console.log("Exercise is",formData)
       await exercisesApi.create(formData);
       await loadExercises(); // Refresh the list
+
+      // const res = await fetch("http://localhost:4000/api/workout/create-exercise", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(formData),
+      //   });
+      //   if (!res.ok) {
+      //     const errorData = await res.json();
+      //     throw new Error(errorData.message);
+      //   }
       setFormData({
         name: '',
         muscleGroup: '',

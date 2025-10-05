@@ -4,9 +4,12 @@ import { motion } from 'framer-motion';
 import { Upload, Users, Calendar, Dumbbell, Activity, TrendingUp } from 'lucide-react';
 import Navbar from '../components/Navbar.jsx';
 import { authApi } from '../mocks/mockApi.js';
+import { useSelector } from 'react-redux';
 
 const Dashboard = () => {
   const currentUser = authApi.getCurrentUser();
+  const {totalMembers}=useSelector((state)=>state.dataSlice)
+  const {totalExercies}=useSelector((state)=>state.dataSlice)
 
   const quickActions = [
     {
@@ -42,7 +45,7 @@ const Dashboard = () => {
   const stats = [
     {
       title: 'Total Members',
-      value: '127',
+      value: totalMembers.length,
       icon: Users,
       change: '+12%',
       changeType: 'positive'
@@ -56,7 +59,7 @@ const Dashboard = () => {
     },
     {
       title: 'Exercises Available',
-      value: '89',
+      value: totalExercies.length,
       icon: Dumbbell,
       change: '+8%',
       changeType: 'positive'
@@ -69,6 +72,8 @@ const Dashboard = () => {
       changeType: 'positive'
     }
   ];
+
+
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">

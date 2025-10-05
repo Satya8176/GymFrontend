@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Minus, Save, Calendar } from 'lucide-react';
 import Navbar from '../components/Navbar.jsx';
 import { membersApi, exercisesApi, routinesApi } from '../mocks/mockApi.js';
+import AddWorkout from '../components/AddWorkout.jsx';
 
 const CreateRoutine = () => {
   const [members, setMembers] = useState([]);
@@ -11,8 +13,9 @@ const CreateRoutine = () => {
   const [selectedDays, setSelectedDays] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  
 
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   useEffect(() => {
     loadData();
@@ -166,83 +169,8 @@ const CreateRoutine = () => {
               <h3 className="text-lg font-medium text-card-foreground mb-6">Weekly Schedule</h3>
               
               <div className="space-y-6">
-                {daysOfWeek.map(day => (
-                  <div key={day} className="border border-border rounded-lg p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center space-x-2">
-                        <Calendar className="h-5 w-5 text-muted-foreground" />
-                        <h4 className="text-lg font-medium text-card-foreground">{day}</h4>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => addExerciseToDay(day)}
-                        className="flex items-center space-x-2 px-3 py-2 text-primary hover:text-primary-foreground hover:bg-primary/90 rounded-md transition-colors duration-200"
-                      >
-                        <Plus className="h-4 w-4" />
-                        <span>Add Exercise</span>
-                      </button>
-                    </div>
-
-                    {selectedDays[day] && selectedDays[day].length > 0 ? (
-                      <div className="space-y-3">
-                        {selectedDays[day].map((exercise, index) => (
-                          <div key={index} className="flex items-center space-x-4 p-4 bg-muted/50 rounded-lg">
-                            <div className="flex-1">
-                              <select
-                                value={exercise.exerciseId}
-                                onChange={(e) => updateExercise(day, index, 'exerciseId', e.target.value)}
-                                className="w-full px-3 py-2 bg-input border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                              >
-                                <option value="">Select Exercise...</option>
-                                {exercises.map(ex => (
-                                  <option key={ex.id} value={ex.id}>
-                                    {ex.name} ({ex.muscleGroup})
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                            
-                            <div className="w-20">
-                              <label className="block text-xs text-muted-foreground mb-1">Sets</label>
-                              <input
-                                type="number"
-                                value={exercise.sets}
-                                onChange={(e) => updateExercise(day, index, 'sets', parseInt(e.target.value))}
-                                className="w-full px-2 py-2 bg-input border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                                min="1"
-                                max="10"
-                              />
-                            </div>
-                            
-                            <div className="w-20">
-                              <label className="block text-xs text-muted-foreground mb-1">Reps</label>
-                              <input
-                                type="number"
-                                value={exercise.reps}
-                                onChange={(e) => updateExercise(day, index, 'reps', parseInt(e.target.value))}
-                                className="w-full px-2 py-2 bg-input border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                                min="1"
-                                max="50"
-                              />
-                            </div>
-                            
-                            <button
-                              type="button"
-                              onClick={() => removeExerciseFromDay(day, index)}
-                              className="text-destructive hover:text-destructive/90 p-1"
-                            >
-                              <Minus className="h-4 w-4" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-8 text-muted-foreground">
-                        <Calendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                        <p>No exercises added for {day}</p>
-                      </div>
-                    )}
-                  </div>
+                {daysOfWeek.map((day,index) => (
+                  <AddWorkout key={day} day={day} index={index}/>
                 ))}
               </div>
             </div>

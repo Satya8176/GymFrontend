@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { authApi } from '../mocks/mockApi.js';
 import ThemeToggle from './ThemeToggle.jsx';
+import { adminLogOut } from '../serviceFunctions/adminFun.js';
 
 const Navbar = () => {
   const location = useLocation();
@@ -18,7 +19,7 @@ const Navbar = () => {
   const currentUser = authApi.getCurrentUser();
 
   const handleLogout = () => {
-    authApi.logout();
+    adminLogOut();
     navigate('/login');
   };
 

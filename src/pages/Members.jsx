@@ -4,26 +4,37 @@ import { Search, CreditCard as Edit, Calendar, Phone, Mail, User } from 'lucide-
 import Navbar from '../components/Navbar.jsx';
 import MemberEditModal from '../components/MemberEditModal.jsx';
 import { membersApi } from '../mocks/mockApi.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { getMembers } from '../serviceFunctions/userRelatedFunc.js';
+import { setUsers } from '../redux/slices/dataSlice.js';
 
 const Members = () => {
-  const [members, setMembers] = useState([]);
-  const [filteredMembers, setFilteredMembers] = useState([]);
+  const dispatch = useDispatch();
+  const {totalMembers}=useSelector((state)=>state.dataSlice)
+  const [members, setMembers] = useState(totalMembers);
+  const [filteredMembers, setFilteredMembers] = useState(totalMembers);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMember, setSelectedMember] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    loadMembers();
-  }, []);
+  if (!totalMembers || totalMembers.length === 0) {
+    const run=async()=>{
+      const data=await getMembers();
+      dispatch(setUsers(data))
+      setMembers(data)
+    }
+    run();
+  }
+}, [totalMembers, dispatch]);
 
   useEffect(() => {
     if (searchTerm) {
       const filtered = members.filter(member =>
-        member.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member.phone.includes(searchTerm)
+        member.whatsAppNumber.includes(searchTerm)
       );
       setFilteredMembers(filtered);
     } else {
@@ -31,17 +42,7 @@ const Members = () => {
     }
   }, [searchTerm, members]);
 
-  const loadMembers = async () => {
-    try {
-      const data = await membersApi.getAll();
-      setMembers(data);
-      setFilteredMembers(data);
-    } catch (error) {
-      console.error('Failed to load members:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // console.log("Members is",members)
 
   const handleEditMember = (member) => {
     setSelectedMember(member);
@@ -82,10 +83,10 @@ const Members = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background text-foreground">
         <Navbar />
         <div className="flex items-center justify-center h-64">
-          <div className="text-lg text-gray-600">Loading members...</div>
+          <div className="text-lg">Loading data...</div>
         </div>
       </div>
     );
@@ -138,10 +139,10 @@ const Members = () => {
                     Contact
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Details
+                    Guardian Name
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Plan
+                    Purpose
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Joined
@@ -167,9 +168,9 @@ const Members = () => {
                         </div>
                         <div>
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
-                            {member.firstName} {member.lastName}
+                            {member.name}
                           </div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">ID: {member.id}</div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">ID: {member.enrollmentId}</div>
                         </div>
                       </div>
                     </td>
@@ -181,24 +182,29 @@ const Members = () => {
                         </div>
                         <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                           <Phone className="h-4 w-4 text-gray-400 dark:text-gray-500 mr-2" />
-                          {member.phone}
+                          {member.whatsAppNumber}
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900 dark:text-white">
-                        Age: {member.age} • {member.gender}
+                        {member.guardianName}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    {/* <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getPlanColor(member.plan)}`}>
                         {member.plan}
                       </span>
+                    </td> */}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900 dark:text-white">
+                        {member.purpose}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                         <Calendar className="h-4 w-4 mr-1" />
-                        {formatDate(member.joinedAt)}
+                        {formatDate(member.date)}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

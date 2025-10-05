@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,6 +12,9 @@ import UploadUsers from './pages/UploadUsers.jsx';
 import Members from './pages/Members.jsx';
 import CreateRoutine from './pages/CreateRoutine.jsx';
 import CreateExercise from './pages/CreateExercise.jsx';
+import { useDispatch } from 'react-redux';
+import { getAllExercise, getAllRoutine, getMembers } from './serviceFunctions/userRelatedFunc.js';
+import { setAllActiveRoutines, setExercises, setUsers } from './redux/slices/dataSlice.js';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -26,6 +29,20 @@ const PublicRoute = ({ children }) => {
 };
 
 function App() {
+  const dispatch=useDispatch();
+  useEffect(()=>{
+    const run=async()=>{
+      const allMembers=await getMembers() ;
+      dispatch(setUsers(allMembers));
+      // const allExercises=await getAllExercise();
+      // dispatch(setExercises(allExercises));
+      // const allActiveRoutine=await getAllRoutine();
+      // dispatch(setAllActiveRoutines(allActiveRoutine));
+    }
+    run();
+  },[])
+
+
   return (
     <ThemeProvider>
       <Router>

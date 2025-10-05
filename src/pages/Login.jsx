@@ -5,6 +5,7 @@ import { Dumbbell, Eye, EyeOff } from 'lucide-react';
 import { authApi } from '../mocks/mockApi.js';
 import ThemeToggle from '../components/ThemeToggle.jsx';
 import toast from 'react-hot-toast';
+import { adminLogin } from '../serviceFunctions/adminFun.js';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -27,8 +28,9 @@ const Login = () => {
     setLoading(true);
     
     try {
-      await authApi.login(formData);
-      navigate('/dashboard');
+        const res=await adminLogin(formData);
+        // console.log("This is response",res)
+        navigate("/dashboard");
     } catch (error) {
       toast.error('Invalid credentials');
     } finally {
@@ -84,7 +86,7 @@ const Login = () => {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-3 py-3 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                className="w-full px-3 py-3 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 dark:text-white"
                 placeholder="Enter your email"
               />
             </motion.div>
@@ -105,7 +107,8 @@ const Login = () => {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full px-3 py-3 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 pr-10"
+                  className="w-full px-3 py-3 bg-input border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 pr-10
+                  dark:text-white"
                   placeholder="Enter your password"
                 />
                 <motion.button
@@ -153,16 +156,6 @@ const Login = () => {
                 </Link>
               </p>
             </motion.div>
-
-            <motion.div 
-              className="mt-6 p-4 bg-primary/10 rounded-xl border border-border"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.7 }}
-            >
-              <p className="text-sm text-primary font-medium">Demo Login</p>
-              <p className="text-xs text-primary/80 mt-1">Use any email and password to login</p>
-            </motion.div>
           </form>
         </motion.div>
       </div>
@@ -171,3 +164,7 @@ const Login = () => {
 };
 
 export default Login;
+
+
+
+// Where ever you want to change the stlying of the dark mode just write dark:property

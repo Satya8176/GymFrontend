@@ -52,7 +52,7 @@ const Navbar = () => {
                 <Dumbbell className="h-8 w-8 text-primary mr-2" />
               </motion.div>
               <span className="text-xl font-bold text-foreground">
-                FitnessPro Admin
+                FitnessPro 
               </span>
             </motion.div>
           </div>
@@ -86,9 +86,9 @@ const Navbar = () => {
 
           <div className="flex items-center space-x-4">
             <ThemeToggle />
-            <div className="text-sm text-muted-foreground">
+            {/* <div className="text-sm text-muted-foreground">
               Welcome, <span className="font-medium text-foreground">{currentUser?.name || 'Gym Owner'}</span>
-            </div>
+            </div> */}
             <motion.button
               onClick={handleLogout}
               className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20 transition-colors duration-200"
@@ -96,7 +96,7 @@ const Navbar = () => {
               whileTap={{ scale: 0.95 }}
             >
               <LogOut className="h-4 w-4" />
-              <span>Logout</span>
+              <span className='text-red-500 font-bold'>Logout</span>
             </motion.button>
           </div>
         </div>

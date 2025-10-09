@@ -24,17 +24,18 @@ export const adminLogin=async(body)=>{
 
 export const adminSignUp=async(formData)=>{
   try{
+      
       const fd=new FormData();
       fd.append("name",formData.name)
       fd.append("email",formData.email);
       fd.append("password",formData.password);
-      fd.append("cnfpassword",formData.confirmPassword);
+      fd.append("cnfpassword",formData.confirmPassword)
       fd.append("phone",formData.phone);
       const res=await axios.post(
         "http://localhost:4000/api/owner/signUp",
         fd
       )
-      if (res.status !== 200) {
+      if (!(res.status === 200)) {
         throw new Error(res.data?.message || 'SignUp failed');
       }
       toast.success('User SignUp complete');

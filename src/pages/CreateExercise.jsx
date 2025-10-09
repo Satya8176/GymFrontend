@@ -27,7 +27,7 @@ const CreateExercise = () => {
     'Barbell', 'Dumbbell', 'Machine', 'Cable', 'Bodyweight', 'Kettlebell', 'Resistance Band', 'Other'
   ];
 
-  console.log("All Exercises",exercises);
+  // console.log("All Exercises",exercises);
   useEffect(() => {
     if (!totalExercies || totalExercies.length === 0) {
       const run=async()=>{

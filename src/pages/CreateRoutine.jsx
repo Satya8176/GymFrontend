@@ -4,72 +4,111 @@ import { Plus, Minus, Save, Calendar } from 'lucide-react';
 import Navbar from '../components/Navbar.jsx';
 import { membersApi, exercisesApi, routinesApi } from '../mocks/mockApi.js';
 import AddWorkout from '../components/AddWorkout.jsx';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllExercise, getMembers } from '../serviceFunctions/userRelatedFunc.js';
+import { setAllExercises, setUsers } from '../redux/slices/dataSlice.js';
 
 const CreateRoutine = () => {
-  const [members, setMembers] = useState([]);
-  const [exercises, setExercises] = useState([]);
+  const dispatch = useDispatch();
+  const {totalMembers}=useSelector((state)=>state.dataSlice)
+  const {totalExercies}=useSelector((state)=>state.dataSlice)
+  const [members, setMembers] = useState(totalMembers);
+  const [exercises, setExercises] = useState(totalExercies);
   const [selectedMember, setSelectedMember] = useState('');
   const [routineName, setRoutineName] = useState('');
   const [selectedDays, setSelectedDays] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   
 
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    try {
-      const [membersData, exercisesData] = await Promise.all([
-        membersApi.getAll(),
-        exercisesApi.getAll()
-      ]);
-      setMembers(membersData);
-      setExercises(exercisesData);
-    } catch (error) {
-      console.error('Failed to load data:', error);
-    } finally {
-      setLoading(false);
+    if (!totalMembers || totalMembers.length === 0) {
+      const run=async()=>{
+        const data=await getMembers();
+        dispatch(setUsers(data))
+        setMembers(data)
+      }
+      run();
     }
-  };
+  }, [totalMembers, dispatch]);
+  useEffect(() => {
+      if (!totalExercies || totalExercies.length === 0) {
+        const run=async()=>{
+          const data=await getAllExercise();
+          dispatch(setAllExercises(data))
+          setExercises(data)
+        }
+        run();
+      }
+    }, [totalExercies, dispatch]);
 
-  const addExerciseToDay = (day) => {
-    setSelectedDays(prev => ({
-      ...prev,
-      [day]: [
-        ...(prev[day] || []),
-        { exerciseId: '', sets: 3, reps: 10 }
-      ]
-    }));
-  };
+  // useEffect(() => {
+  //   loadData();
+  // }, []);
 
-  const removeExerciseFromDay = (day, index) => {
-    setSelectedDays(prev => ({
-      ...prev,
-      [day]: prev[day].filter((_, i) => i !== index)
-    }));
-  };
+  // const loadData = async () => {
+  //   try {
+  //     const [membersData, exercisesData] = await Promise.all([
+  //       membersApi.getAll(),
+  //       exercisesApi.getAll()
+  //     ]);
+  //     setMembers(membersData);
+  //     setExercises(exercisesData);
+  //   } catch (error) {
+  //     console.error('Failed to load data:', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  const updateExercise = (day, index, field, value) => {
-    setSelectedDays(prev => ({
-      ...prev,
-      [day]: prev[day].map((exercise, i) => 
-        i === index ? { ...exercise, [field]: value } : exercise
-      )
-    }));
-  };
+  // const addExerciseToDay = (day) => {
+  //   setSelectedDays(prev => ({
+  //     ...prev,
+  //     [day]: [
+  //       ...(prev[day] || []),
+  //       { exerciseId: '', sets: 3, reps: 10 }
+  //     ]
+  //   }));
+  // };
+
+  // const removeExerciseFromDay = (day, index) => {
+  //   setSelectedDays(prev => ({
+  //     ...prev,
+  //     [day]: prev[day].filter((_, i) => i !== index)
+  //   }));
+  //    };
+
+  // const updateExercise = (day, index, field, value) => {
+  //   setSelectedDays(prev => ({
+  //     ...prev,
+  //     [day]: prev[day].map((exercise, i) => 
+  //       i === index ? { ...exercise, [field]: value } : exercise
+  //     )
+  //   }));
+  // };
+  // console.log(totalExercies)
+
+  const [weekRoutine,setWeekRoutine]=useState([]);
+
+  function addSingleDayRoutine(obj){
+    setWeekRoutine((prev)=>[...prev,obj]);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!selectedMember || !routineName) return;
-
+    const obj={
+      "Member":selectedMember,
+      "Name":routineName,
+      "WeekRoutine":weekRoutine
+    }
+    console.log("Week Routine is",obj)
     // Filter out empty days
     const filteredDays = Object.entries(selectedDays).reduce((acc, [day, exercises]) => {
-      const validExercises = exercises.filter(ex => ex.exerciseId);
+      const validExercises = exercises.filter(ex => ex.id);
       if (validExercises.length > 0) {
         acc[day] = validExercises;
       }
@@ -142,8 +181,8 @@ const CreateRoutine = () => {
                 >
                   <option value="">Choose a member...</option>
                   {members.map(member => (
-                    <option key={member.id} value={member.id}>
-                      {member.firstName} {member.lastName}
+                    <option key={member.id} value={member.enrollmentId}>
+                      {member.name}
                     </option>
                   ))}
                 </select>
@@ -170,7 +209,7 @@ const CreateRoutine = () => {
               
               <div className="space-y-6">
                 {daysOfWeek.map((day,index) => (
-                  <AddWorkout key={day} day={day} index={index}/>
+                  <AddWorkout key={day} day={day} index={index} addSingleDayRoutine={addSingleDayRoutine}/>
                 ))}
               </div>
             </div>

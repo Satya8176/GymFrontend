@@ -179,10 +179,10 @@ const Dashboard = () => {
           <h2 className="text-xl font-bold text-foreground mb-4">Recent Activity</h2>
           <div className="space-y-4">
             {[
-              { action: 'New member registered', member: 'Rahul Verma', time: '2 hours ago' },
-              { action: 'Routine created', member: 'Ananya Kumar', time: '4 hours ago' },
-              { action: 'Exercise added', member: 'System', time: '1 day ago' },
-              { action: 'Member updated', member: 'Vikram Singh', time: '2 days ago' }
+              // { action: 'New member registered', member: `${totalMembers[0].name}`, time: '2 hours ago' },
+              { action: 'Routine created', member: 'Later Updated', time: '4 hours ago' },
+              // { action: 'Exercise added', member: `${totalExercies[totalExercies.length-1].name}`, time: '1 day ago' },
+              // { action: 'Member updated', member: `${totalMembers[0].name}`, time: '2 days ago' }
             ].map((activity, index) => (
               <motion.div 
                 key={index} 

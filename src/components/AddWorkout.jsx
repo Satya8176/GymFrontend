@@ -20,7 +20,7 @@ function AddWorkout({ day, addSingleDayRoutine, index,exercises, initialWorkouts
   const [isSaved,setIsSaved]=useState(false);
   const [deleteBtn,setDeleteBtn]=useState(true);
 
-  // console.log("exercise in Workout is",exercises)
+  // console.log("Initial Workout is",initialWorkouts)
 
 
   useEffect(() => {
@@ -135,7 +135,7 @@ function AddWorkout({ day, addSingleDayRoutine, index,exercises, initialWorkouts
               const result = exercises.filter(ex => ex.id == initialExercise.id);
               return (
                 <div key={index}>
-                   <AddSets key={index} ex={result[0]} deleteWorkOut={deleteWorkOut} addWorkOutHandler={addWorkOutHandler} deleteBtn={deleteBtn} />
+                   <AddSets key={index} ex={initialExercise} deleteWorkOut={deleteWorkOut} addWorkOutHandler={addWorkOutHandler} deleteBtn={deleteBtn} exDetail={result[0]} />
                 </div>
                 )
             })}

@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
-function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn}) {
+function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn,exDetail}) {
 
   // console.log("Exerise in set is",ex)
 
@@ -54,13 +54,13 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn}) {
 
   function getBaseWeight() {
     // try exercise provided maxWeight, otherwise fallback to local obj
-    const candidate = ex && ex.maxWeight ? ex.maxWeight : obj.maxWeight;
+    const candidate = exDetail && exDetail.maxWeight ? exDetail.maxWeight : obj.maxWeight;
     const n = parseNumber(candidate);
     return Number.isFinite(n) ? n : 100; // default base weight
   }
 
   function getBaseReps() {
-    const candidate = ex && ex.maxReps ? ex.maxReps : obj.maxRepetion;
+    const candidate = exDetail && exDetail.maxReps ? exDetail.maxReps : obj.maxRepetion;
     const n = parseNumber(candidate);
     return Number.isFinite(n) ? n : 20; // default base reps
   }

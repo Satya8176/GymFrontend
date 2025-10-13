@@ -10,7 +10,8 @@ function TestLanding() {
 
   const location=useLocation();
   const enrollmentId=location.pathname.split('/').at(-1);
-  console.log(enrollmentId);
+  const whichPage=location.pathname.split('/').at(-2);
+  // console.log(enrollmentId);
   const [user,setUser]=useState();
   const [loading,setLoading]=useState(true);
   const [testEntries,setTestEntries]=useState();
@@ -63,8 +64,11 @@ function TestLanding() {
             </div>
           </motion.div>
           {
-            user && user?.testDone ?(<ViewTest exercisesTested={testEntries} reTest={true}></ViewTest>):(<TakeTest enrollmentId={enrollmentId}></TakeTest>)
+            whichPage==="take-test"?(<TakeTest enrollmentId={enrollmentId}></TakeTest>):(<ViewTest exercisesTested={testEntries} reTest={true} enrollmentId={enrollmentId}></ViewTest>)
           }
+          {/* {
+            user && user?.testDone ?(<ViewTest exercisesTested={testEntries} reTest={true}></ViewTest>):(<TakeTest enrollmentId={enrollmentId}></TakeTest>)
+          } */}
       </div>
         
     </div>

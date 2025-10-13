@@ -231,7 +231,7 @@ const Members = () => {
                             <button className="text-destructive hover:font-bold hover:text-green-600 py-1 px-2 bg-green-300 rounded-sm hover:scale-90"
                             type='button'
                             onClick={()=>{
-                              navigate(`/test-page/${member.enrollmentId}`)
+                              navigate(`/test/view-test/${member.enrollmentId}`)
                             }}
                             >View Test</button>
 
@@ -239,7 +239,7 @@ const Members = () => {
                             <button className="text-destructive hover:font-bold hover:text-red-600 py-1 px-2 bg-red-300 rounded-sm hover:scale-90"
                             type='button'
                             onClick={()=>{
-                              navigate(`/test-page/${member.enrollmentId}`)
+                              navigate(`/test/take-test/${member.enrollmentId}`)
                             }}
                             >Take Test</button>
                           </div>)}

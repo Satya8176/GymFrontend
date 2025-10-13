@@ -157,7 +157,22 @@ function App() {
                 } 
               />
               <Route 
-                path="/test-page/*" 
+                path="/test/take-test/*" 
+                element={
+                  <ProtectedRoute>
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <TestLanding />
+                    </motion.div>
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/test/view-test/*" 
                 element={
                   <ProtectedRoute>
                     <motion.div

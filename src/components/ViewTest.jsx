@@ -1,7 +1,9 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
-function ViewTest({ exercisesTested,reTest }) {
+function ViewTest({ exercisesTested,reTest,enrollmentId}) {
+  const navigate=useNavigate();
 
   return (
     <div>
@@ -53,6 +55,9 @@ function ViewTest({ exercisesTested,reTest }) {
           type="button"
           // How i can navigate so that it take restest 
           //We can do like when press on retest then delete this user entry from the table then go to testLanding
+          onClick={()=>{
+            navigate(`/test/take-test/${enrollmentId}`)
+          }}
           >
             Retest
           </button>

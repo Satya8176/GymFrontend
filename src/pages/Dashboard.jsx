@@ -5,6 +5,7 @@ import { Upload, Users, Calendar, Dumbbell, Activity, TrendingUp } from 'lucide-
 import Navbar from '../components/Navbar.jsx';
 import { authApi } from '../mocks/mockApi.js';
 import { useSelector } from 'react-redux';
+import TakeTest from '../components/TakeTest.jsx';
 
 const Dashboard = () => {
   const currentUser = authApi.getCurrentUser();
@@ -206,6 +207,7 @@ const Dashboard = () => {
           </div>
         </motion.div>
       </div>
+      {/* <TakeTest></TakeTest> */}
     </div>
   );
 };

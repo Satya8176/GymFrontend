@@ -7,6 +7,7 @@ import { membersApi } from '../mocks/mockApi.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMembers } from '../serviceFunctions/userRelatedFunc.js';
 import { setUsers } from '../redux/slices/dataSlice.js';
+import { useNavigate } from 'react-router-dom';
 
 const Members = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ const Members = () => {
   const [selectedMember, setSelectedMember] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate=useNavigate();
 
   useEffect(() => {
   if (!totalMembers || totalMembers.length === 0) {
@@ -42,7 +44,7 @@ const Members = () => {
     }
   }, [searchTerm, members]);
 
-  // console.log("Members is",members)
+  console.log("Members is",members)
 
   const handleEditMember = (member) => {
     setSelectedMember(member);
@@ -132,28 +134,31 @@ const Members = () => {
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    S.No.
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Member
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Contact
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Guardian Name
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Purpose
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  {/* <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Joined
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  </th> */}
+                  <th className="px-6 py-3 text-right text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {filteredMembers.map((member) => (
+                {filteredMembers.map((member,index) => (
                   <motion.tr 
                     key={member.id} 
                     className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
@@ -163,8 +168,15 @@ const Members = () => {
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">
+                            {index+1}
+                          </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
                         <div className="bg-primary-100 dark:bg-primary-900/30 rounded-full p-2 mr-3">
-                          <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                          <User className="h-5 w-5 text-primary-600 dark:text-slate-300" />
                         </div>
                         <div>
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
@@ -201,12 +213,12 @@ const Members = () => {
                         {member.purpose}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    {/* <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                         <Calendar className="h-4 w-4 mr-1" />
                         {formatDate(member.date)}
                       </div>
-                    </td>
+                    </td> */}
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <motion.button
                         onClick={() => handleEditMember(member)}
@@ -214,8 +226,30 @@ const Members = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                       >
-                        <Edit className="h-4 w-4" />
-                        <span>Edit</span>
+                        <div className='flex flex-row gap-2'>
+                          {member.testDone?(<div>
+                            <button className="text-destructive hover:font-bold hover:text-green-600 py-1 px-2 bg-green-300 rounded-sm hover:scale-90"
+                            type='button'
+                            onClick={()=>{
+                              navigate(`/test-page/${member.enrollmentId}`)
+                            }}
+                            >View Test</button>
+
+                          </div>):(<div>
+                            <button className="text-destructive hover:font-bold hover:text-red-600 py-1 px-2 bg-red-300 rounded-sm hover:scale-90"
+                            type='button'
+                            onClick={()=>{
+                              navigate(`/test-page/${member.enrollmentId}`)
+                            }}
+                            >Take Test</button>
+                          </div>)}
+                          <div className='flex flex-row items-center gap-x-1'>
+                            <Edit className="h-4 w-4 text-blue-400 font-bold" />
+                            <span className='text-blue-400 font-bold'>Edit</span>
+                          </div>
+                        </div>
+                          
+                        
                       </motion.button>
                     </td>
                   </motion.tr>

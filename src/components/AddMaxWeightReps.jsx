@@ -2,10 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
-function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn}) {
-
-  // console.log("Exerise in set is",ex)
-
+function AddMaxWeightReps() {
   const formRef = useRef({
       setNo: "",
       weight: "",
@@ -13,19 +10,10 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn}) {
     });
   // const [workouts,setWorkouts]=useState([])
 
-  const obj={
-    maxWeight:"50kg",
-    maxRepetion:"20"
-  }
-
   const [sets,setSets]=useState([]);
   const [showSets,setShowSets]=useState(false);
   const [addSets,setAddSets]=useState(false);
   const [isSaved,setIsSaved]=useState(false);
-  const [percentWeight, setPercentWeight] = useState('');
-  const [percentReps, setPercentReps] = useState('');
-  const [weightValue, setWeightValue] = useState('');
-  const [repsValue, setRepsValue] = useState('');
 
   // Initialize from ex.sets when provided (duplicated days)
   useEffect(() => {
@@ -43,30 +31,6 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn}) {
   }
   function setAddSetHandler(){
     setAddSets(!addSets);
-  }
-  function parseNumber(val) {
-    if (val === undefined || val === null) return NaN;
-    if (typeof val === 'number') return val;
-    const s = String(val).replace(/[^0-9.\-]/g, '');
-    const n = parseFloat(s);
-    return Number.isFinite(n) ? n : NaN;
-  }
-
-  function getBaseWeight() {
-    // try exercise provided maxWeight, otherwise fallback to local obj
-    const candidate = ex && ex.maxWeight ? ex.maxWeight : obj.maxWeight;
-    const n = parseNumber(candidate);
-    return Number.isFinite(n) ? n : 100; // default base weight
-  }
-
-  function getBaseReps() {
-    const candidate = ex && ex.maxReps ? ex.maxReps : obj.maxRepetion;
-    const n = parseNumber(candidate);
-    return Number.isFinite(n) ? n : 20; // default base reps
-  }
-
-  function computeFromPercent(base, percent) {
-    return Math.round((base * (percent / 100)));
   }
   function handleSaveBtn(){
     const workout={"Exercise":ex.id,
@@ -185,83 +149,32 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn}) {
               placeholder="1"
             />
           </div>
-
           <div className="flex flex-row gap-2 items-center">
             <label className="block text-sm font-medium text-card-foreground ">
               Weight
             </label>
-            <div className="flex items-center gap-2">
-              <select
-                value={percentWeight}
-                onChange={(e) => {
-                  const p = e.target.value;
-                  setPercentWeight(p);
-                  if (!p) return;
-                  const base = getBaseWeight();
-                  const computed = computeFromPercent(base, Number(p));
-                  setWeightValue(String(computed));
-                  formRef.current.weight = String(computed);
-                }}
-                className="px-2 py-1 bg-input border border-border rounded-sm"
-              >
-                <option value="">% </option>
-                {[10,20,30,40,50,60,70,80,90,100].map((v) => (
-                  <option key={v} value={v}>{v}%</option>
-                ))}
-              </select>
-              <input
-                type="text"
-                value={weightValue}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setWeightValue(val);
-                  formRef.current.weight = val;
-                  // clear percent if user manually edits
-                  if (percentWeight) setPercentWeight('');
-                }}
-                className="w-[30%] px-2 py-1 bg-input text-center rounded-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                placeholder="0 kG"
-              />
-            </div>
+            <input
+              type="text"
+              onChange={(e) => {
+                formRef.current.weight = e.target.value;
+              }}
+              className="w-[20%] px-1 py-1 bg-input text-center rounded-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              placeholder="kG"
+            />
           </div>
           <div className="flex flex-row gap-2 items-center">
             <label className="block text-sm font-medium text-card-foreground ">
               Reps
             </label>
-            <div className="flex items-center gap-2">
-              <select
-                value={percentReps}
-                onChange={(e) => {
-                  const p = e.target.value;
-                  setPercentReps(p);
-                  if (!p) return;
-                  const base = getBaseReps();
-                  const computed = computeFromPercent(base, Number(p));
-                  setRepsValue(String(computed));
-                  formRef.current.reps = String(computed);
-                }}
-                className="px-2 py-1 bg-input border border-border rounded-sm"
-              >
-                <option value="">% </option>
-                {[10,20,30,40,50,60,70,80,90,100].map((v) => (
-                  <option key={v} value={v}>{v}%</option>
-                ))}
-              </select>
-              <input
-                type="text"
-                value={repsValue}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setRepsValue(val);
-                  formRef.current.reps = val;
-                  if (percentReps) setPercentReps('');
-                }}
-                className="w-[20%] px-1 py-1 bg-input text-center rounded-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                placeholder="12"
-              />
-            </div>
+            <input
+              type="text"
+              onChange={(e) => {
+                formRef.current.reps = e.target.value;
+              }}
+              className="w-[20%] px-1 py-1 bg-input text-center rounded-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              placeholder="12"
+            />
           </div>
-
           <button
             type="button"
             className="w-[10%] h-fit text-blue-700 hover:font-bold hover:text-blue-900 py-1 px-2 bg-blue-400 rounded-sm hover:scale-95 "
@@ -296,4 +209,4 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn}) {
   )
 }
 
-export default AddSets;
+export default AddMaxWeightReps;

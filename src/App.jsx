@@ -15,6 +15,7 @@ import CreateExercise from './pages/CreateExercise.jsx';
 import { useDispatch } from 'react-redux';
 import { getAllExercise, getAllRoutine, getMembers } from './serviceFunctions/userRelatedFunc.js';
 import { setAllActiveRoutines, setAllExercises, setUsers } from './redux/slices/dataSlice.js';
+import TestLanding from './pages/TestLanding.jsx';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -155,6 +156,22 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+              <Route 
+                path="/test-page/*" 
+                element={
+                  <ProtectedRoute>
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <TestLanding />
+                    </motion.div>
+                  </ProtectedRoute>
+                } 
+              />
+
             </Routes>
           </AnimatePresence>
           

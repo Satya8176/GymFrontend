@@ -40,6 +40,23 @@ export const getMembers=async()=>{
   }
 }
 
+export const getSingleUser=async(enrollmentId)=>{
+  try{
+    const body=new FormData();
+    body.append("enrollmentId",enrollmentId)
+    const res=await axios.post(
+      "http://localhost:4000/api/user/get-single-user",
+      body
+    )
+    if (res.status !== 200) throw new Error(res.data?.message || "Fetching members fails");
+    const data = res.data;
+    return data.data || data.users
+  }
+  catch(err){
+    console.log("Error in getting Member",err)
+  }
+}
+
 export const createExercise=async(body)=>{
   try{
     const res=await axios.post(
@@ -101,6 +118,80 @@ export const getLatestRoutine=async(body)=>{
     console.log("Error in getting routine",err)
   }
 }
+
+
+//From here test realted data is there
+
+export const createTestFun=async(body)=>{
+  try{
+    const res=await axios.post(
+      "http://localhost:4000/api/test/create-test",
+      body
+    )
+    if (res.status !== 200) throw new Error(res.data?.message || "Test upload failed");
+    toast.success("Test Submitted Successfully");
+  }
+  catch(err){
+    const msg=err?.response?.data?.message ||"Test Creation Error"
+    console.log("This is the error",msg);
+    toast.error(msg);;
+  }
+}
+
+export const reTest=async(body)=>{
+  try{
+    const res=await axios.post(
+      "http://localhost:4000/api/test/retest",
+      body
+    )
+    if (res.status !== 200) throw new Error(res.data?.message || "Retest upload failed");
+    toast.success("Test Submitted Successfully");
+  }
+  catch(err){
+    const msg=err?.response?.data?.message ||"Retest Creation Error"
+    console.log("This is the error",msg);
+    toast.error(msg);;
+  }
+}
+
+export const fetchUserTests=async(enrollmentId)=>{
+  try{
+    const fd=new FormData();
+    fd.append("userId",enrollmentId)
+    const res=await axios.post(
+      "http://localhost:4000/api/test/get-test",
+      fd
+    )
+    if (res.status !== 200) throw new Error(res.data?.message || "Test fetching Error");
+    const data = res.data;
+    return data.data || data.users || []
+  }
+  catch(err){
+    const msg=err?.response?.data?.message ||"Test fetching Error"
+    console.log("This is the error",msg);
+    toast.error(msg);;
+  }
+}
+
+export const flattenExerciseList=(dataArray)=>{
+  return dataArray.map(item => ({
+    userId: item.userId,
+    exerciseId: item.exerciseId,
+    name: item.exercise?.name || null,
+    maxReps: item.maxReps,
+    maxWeight: item.maxWeight
+  }));
+}
+
+export const UserAvailableExercises=(dataArray)=>{
+  return dataArray.map(item=>({
+    id:item.exerciseId,
+    name:item.exercise?.name,
+    maxReps: item.maxReps,
+    maxWeight: item.maxWeight
+  }))
+}
+
 
 
 //From here we need to create rotuine function

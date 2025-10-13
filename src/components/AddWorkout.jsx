@@ -8,10 +8,10 @@ import { getAllExercise } from "../serviceFunctions/userRelatedFunc.js";
 import { setAllExercises } from "../redux/slices/dataSlice.js";
 import AddSets from "./AddSets.jsx";
 
-function AddWorkout({ day, addSingleDayRoutine,index }) {
+function AddWorkout({ day, addSingleDayRoutine, index,exercises, initialWorkouts = [] }) {
   const dispatch = useDispatch();
   const { totalExercies } = useSelector((state) => state.dataSlice);
-  const [exercises, setExercises] = useState(totalExercies);
+  // const [exercises, setExercises] = useState(totalExercies);
   const [loading, setLoading] = useState(true);
   const [workouts, setWorkout] = useState([]);
   const [currDayExercise, setCurrentDayExercise] = useState([]);
@@ -19,40 +19,38 @@ function AddWorkout({ day, addSingleDayRoutine,index }) {
   const [selectedExerciseId, setSelectedExerciseId] = useState('');
   const [isSaved,setIsSaved]=useState(false);
   const [deleteBtn,setDeleteBtn]=useState(true);
-  // const formRef = useRef({
-  //   exercise: "",
-  //   setNo: "",
-  //   weight: "",
-  //   reps: "",
-  // });
-  // useEffect(() => {
-  //     loadData();
-  //   }, []);
 
-  // const loadData = async () => {
-  //     try {
-  //       const [ exercisesData] = await Promise.all([
-  //         exercisesApi.getAll()
-  //       ]);
-  //       setExercises(exercisesData);
-  //     } catch (error) {
-  //       console.error('Failed to load data:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  // console.log("Workout array is",workouts);
+  // console.log("exercise in Workout is",exercises)
+
 
   useEffect(() => {
     if (!totalExercies || totalExercies.length === 0) {
       const run = async () => {
         const data = await getAllExercise();
         dispatch(setAllExercises(data));
-        setExercises(data);
       };
       run();
     }
   }, [totalExercies, dispatch]);
+
+  // When parent passes initialWorkouts (e.g., duplicated from another day),
+  // populate the UI state so the child shows them.
+  useEffect(() => {
+    if (initialWorkouts && initialWorkouts.length > 0) {
+      // set the raw workouts array (shape produced by AddSets)
+      setWorkout(initialWorkouts);
+
+      // map to currDayExercise {id, name} so AddSets can render
+      const mapped = initialWorkouts.map((w) => {
+        const exId = w.Exercise || w.exerciseId || w.exercise;
+        const exObj = (exercises || []).find((e) => String(e.id) === String(exId));
+        return { id: exId, name: exObj ? exObj.name : '', sets: w.sets || [] };
+      });
+      setCurrentDayExercise(mapped);
+      setIsSaved(true);
+      setDeleteBtn(false);
+    }
+  }, [initialWorkouts, exercises]);
 
   function deleteWorkOut(value){
     console.log(value)
@@ -116,7 +114,7 @@ function AddWorkout({ day, addSingleDayRoutine,index }) {
                   <option value="">Select Exercise...</option>
                   {exercises.map((ex) => (
                     <option key={ex.id} value={ex.id}>
-                      {ex.name} ({ex.muscleGroup})
+                      {ex.name}
                     </option>
                   ))}
                 </select>
@@ -133,10 +131,11 @@ function AddWorkout({ day, addSingleDayRoutine,index }) {
         )}
         {currDayExercise.length > 0 ? (
           <div className="">
-            {currDayExercise.map((ex,index)=>{
+            {currDayExercise.map((initialExercise,index)=>{
+              const result = exercises.filter(ex => ex.id == initialExercise.id);
               return (
                 <div key={index}>
-                   <AddSets key={index} ex={ex} deleteWorkOut={deleteWorkOut} addWorkOutHandler={addWorkOutHandler} deleteBtn={deleteBtn}/>
+                   <AddSets key={index} ex={result[0]} deleteWorkOut={deleteWorkOut} addWorkOutHandler={addWorkOutHandler} deleteBtn={deleteBtn} />
                 </div>
                 )
             })}
@@ -189,3 +188,27 @@ export default AddWorkout;
                   />
                 </div>      */
 }
+
+  // const formRef = useRef({
+  //   exercise: "",
+  //   setNo: "",
+  //   weight: "",
+  //   reps: "",
+  // });
+  // useEffect(() => {
+  //     loadData();
+  //   }, []);
+
+  // const loadData = async () => {
+  //     try {
+  //       const [ exercisesData] = await Promise.all([
+  //         exercisesApi.getAll()
+  //       ]);
+  //       setExercises(exercisesData);
+  //     } catch (error) {
+  //       console.error('Failed to load data:', error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  // console.log("Workout array is",workouts);

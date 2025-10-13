@@ -3,11 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Save } from 'lucide-react';
 
 const MemberEditModal = ({ member, isOpen, onClose, onSave }) => {
+  console.log("Member is",member)
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    name: '',
+    guardianName: '',
     email: '',
-    phone: '',
+    whatsAppNumber: '',
     age: '',
     gender: '',
     plan: ''
@@ -16,13 +17,24 @@ const MemberEditModal = ({ member, isOpen, onClose, onSave }) => {
   useEffect(() => {
     if (member) {
       setFormData({
-        firstName: member.firstName || '',
-        lastName: member.lastName || '',
+        name: member.name || '',
+        guardianName: member.guardianName || '',
         email: member.email || '',
-        phone: member.phone || '',
+        whatsAppNumber: member.whatsAppNumber || '',
         age: member.age || '',
         gender: member.gender || '',
-        plan: member.plan || ''
+        plan: member.plan || '',
+        purpose:member.purpose||'',
+        experienceLevel:member.experienceLevel||'',
+        medicalConditions:member.medicalConditions || '',
+        dietPreference:member.dietPreference||'',
+        height:member.height || '',
+        weight:member.weight || '',
+        biceps:member.biceps || '',
+        chest:member.chest||'',
+        thigh:member.thigh||'',
+        waist:member.waist||'',
+
       });
     }
   }, [member]);
@@ -51,7 +63,7 @@ const MemberEditModal = ({ member, isOpen, onClose, onSave }) => {
         onClick={onClose}
       >
         <motion.div 
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700"
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700"
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -70,15 +82,16 @@ const MemberEditModal = ({ member, isOpen, onClose, onSave }) => {
           </div>
 
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <div className='text-lg font-semibold text-gray-700 dark:text-gray-300 mb-[-10px]'>Basic Information</div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  First Name
+                  Name
                 </label>
                 <input
                   type="text"
-                  name="firstName"
-                  value={formData.firstName}
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
                   required
@@ -86,12 +99,12 @@ const MemberEditModal = ({ member, isOpen, onClose, onSave }) => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Last Name
+                  Guardian Name
                 </label>
                 <input
                   type="text"
-                  name="lastName"
-                  value={formData.lastName}
+                  name="guardianName"
+                  value={formData.guardianName}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
                   required
@@ -99,7 +112,36 @@ const MemberEditModal = ({ member, isOpen, onClose, onSave }) => {
               </div>
             </div>
 
-            <div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Email
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Phone
+                </label>
+                <input
+                  type="tel"
+                  name="whatsAppNumber"
+                  value={formData.whatsAppNumber}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Email
               </label>
@@ -111,17 +153,18 @@ const MemberEditModal = ({ member, isOpen, onClose, onSave }) => {
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
                 required
               />
-            </div>
+            </div> */}
+            <div className='text-lg font-semibold text-gray-500 dark:text-gray-300 mb-[-10px]'>Fitness Profile</div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Phone
+                  Purpose for Gym
                 </label>
                 <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
+                  type="text"
+                  name="purpose"
+                  value={formData.purpose}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
                   required
@@ -129,12 +172,12 @@ const MemberEditModal = ({ member, isOpen, onClose, onSave }) => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Age
+                  Experience Level
                 </label>
                 <input
-                  type="number"
-                  name="age"
-                  value={formData.age}
+                  type="text"
+                  name="experienceLevel"
+                  value={formData.experienceLevel}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
                   required
@@ -145,6 +188,134 @@ const MemberEditModal = ({ member, isOpen, onClose, onSave }) => {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Diet Preference
+                </label>
+                <input
+                  type="text"
+                  name="dietPreference"
+                  value={formData.dietPreference}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Medical Condition
+                </label>
+                <input
+                  type="text"
+                  name="medicalConditions"
+                  value={formData.medicalConditions}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                  required
+                  min="16"
+                  max="100"
+                />
+              </div>
+            </div>
+
+            <div className='text-lg font-semibold text-gray-500 dark:text-gray-300 mb-[-10px]'>Physical Body Stats</div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Height 
+                </label>
+                <input
+                  type="text"
+                  name="height"
+                  value={formData.height}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Weight
+                </label>
+                <input
+                  type="text"
+                  name="weight"
+                  value={formData.weight}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                  required
+                  min="16"
+                  max="100"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Bicep 
+                </label>
+                <input
+                  type="text"
+                  name="biceps"
+                  value={formData.biceps}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Chest
+                </label>
+                <input
+                  type="text"
+                  name="chest"
+                  value={formData.chest}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                  required
+                  min="16"
+                  max="100"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Thigh 
+                </label>
+                <input
+                  type="text"
+                  name="thigh"
+                  value={formData.thigh}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Waist
+                </label>
+                <input
+                  type="text"
+                  name="waist"
+                  value={formData.waist}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                  required
+                  min="16"
+                  max="100"
+                />
+              </div>
+            </div>
+
+
+
+            {/* <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Gender
@@ -179,7 +350,7 @@ const MemberEditModal = ({ member, isOpen, onClose, onSave }) => {
                   <option value="Yearly">Yearly</option>
                 </select>
               </div>
-            </div>
+            </div> */}
 
             <div className="flex justify-end space-x-3 pt-4">
               <motion.button

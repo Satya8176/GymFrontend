@@ -3,7 +3,7 @@ import { Plus, Minus, Save, Calendar, Cross, ArrowDown, ChevronDown } from "luci
 import Navbar from "./Navbar.jsx";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import { createTestFun, getAllExercise } from "../serviceFunctions/userRelatedFunc.js";
+import { createTestFun, fetchUserTests, getAllExercise, reTest } from "../serviceFunctions/userRelatedFunc.js";
 import { setAllExercises } from "../redux/slices/dataSlice.js";
 import ViewTest from "./ViewTest.jsx";
 
@@ -53,6 +53,13 @@ function TakeTest({enrollmentId}) {
       testEntries:exercisesTested
     }
     // console.log(obj)
+    const data=await fetchUserTests(enrollmentId);
+    console.log("Hii this is me 1",data);
+    if(data.length>0){
+      await reTest(obj);
+      return;
+    }
+    console.log("Hii this is me 2");
     await createTestFun(obj)
   }
 

@@ -121,6 +121,13 @@ export const getLatestRoutine=async(body)=>{
 
 
 //From here test realted data is there
+export const modifyTestResult=(dataArray)=>{
+  return dataArray.map(item=>({
+    exerciseId:item.exerciseId,
+    maxReps: item.maxReps,
+    maxWeight: item.maxWeight
+  }))
+}
 
 export const createTestFun=async(body)=>{
   try{
@@ -140,9 +147,14 @@ export const createTestFun=async(body)=>{
 
 export const reTest=async(body)=>{
   try{
+    const newTestEntries=modifyTestResult(body.testEntries);
+    const newObj={
+      userId:body.userId,
+      testEntries:newTestEntries
+    }
     const res=await axios.post(
       "http://localhost:4000/api/test/retest",
-      body
+      newObj
     )
     if (res.status !== 200) throw new Error(res.data?.message || "Retest upload failed");
     toast.success("Test Submitted Successfully");

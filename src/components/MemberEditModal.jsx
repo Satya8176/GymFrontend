@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Save } from 'lucide-react';
 
 const MemberEditModal = ({ member, isOpen, onClose, onSave }) => {
-  console.log("Member is",member)
+  // console.log("Member is",member)
   const [formData, setFormData] = useState({
     name: '',
     guardianName: '',
@@ -23,7 +23,6 @@ const MemberEditModal = ({ member, isOpen, onClose, onSave }) => {
         whatsAppNumber: member.whatsAppNumber || '',
         age: member.age || '',
         gender: member.gender || '',
-        plan: member.plan || '',
         purpose:member.purpose||'',
         experienceLevel:member.experienceLevel||'',
         medicalConditions:member.medicalConditions || '',
@@ -48,7 +47,7 @@ const MemberEditModal = ({ member, isOpen, onClose, onSave }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(member.id, formData);
+    onSave(member.enrollmentId, formData);
   };
 
   if (!isOpen) return null;
@@ -364,7 +363,7 @@ const MemberEditModal = ({ member, isOpen, onClose, onSave }) => {
               </motion.button>
               <motion.button
                 type="submit"
-                className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors duration-200 shadow-lg hover:shadow-xl"
+                className="flex items-center space-x-2 px-4 py-2 bg-primary-600 dark:text-white text-slate-800 rounded-xl hover:bg-primary-700 transition-colors duration-200 shadow-lg hover:shadow-xl"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >

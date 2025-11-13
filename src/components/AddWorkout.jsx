@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Plus, Minus, Save, Calendar, Cross, ArrowDown, ChevronDown } from "lucide-react";
+import { Plus, Minus, Save, Calendar, Cross, ArrowDown, ChevronDown, Pen } from "lucide-react";
 import Navbar from "../components/Navbar.jsx";
 import { membersApi, exercisesApi, routinesApi } from "../mocks/mockApi.js";
 import { motion } from "framer-motion";
@@ -8,7 +8,7 @@ import { getAllExercise } from "../serviceFunctions/userRelatedFunc.js";
 import { setAllExercises } from "../redux/slices/dataSlice.js";
 import AddSets from "./AddSets.jsx";
 
-function AddWorkout({ day, addSingleDayRoutine, index,exercises, initialWorkouts = [] }) {
+function AddWorkout({ day, addSingleDayRoutine, index,exercises,capabilites, initialWorkouts = [] }) {
   const dispatch = useDispatch();
   const { totalExercies } = useSelector((state) => state.dataSlice);
   // const [exercises, setExercises] = useState(totalExercies);
@@ -19,6 +19,13 @@ function AddWorkout({ day, addSingleDayRoutine, index,exercises, initialWorkouts
   const [selectedExerciseId, setSelectedExerciseId] = useState('');
   const [isSaved,setIsSaved]=useState(false);
   const [deleteBtn,setDeleteBtn]=useState(true);
+  // const [firstInitial,setFirstInitial]=useState(false);
+  const [editInitialWorkOut, setInitialWorkOut] = useState(false);
+
+  useEffect(() => {
+    const shouldEdit =(day === 'Day 4' || day === 'Day 5' || day === 'Day 6') && initialWorkouts.length > 0;
+    setInitialWorkOut(shouldEdit);
+  }, [day,initialWorkouts]);
 
   // console.log("Initial Workout is",initialWorkouts)
 
@@ -57,11 +64,17 @@ function AddWorkout({ day, addSingleDayRoutine, index,exercises, initialWorkouts
     setCurrentDayExercise(prev => prev.filter((item, i) => item.id !== value));
     setWorkout(prev=>prev.filter((item,i)=>item.Exercise !==value))
   }
-
+  function handleEditInitialWorkOut(){
+    setIsSaved(false);
+    setDeleteBtn(true);
+    setInitialWorkOut(false);
+  }
   function addWorkOutHandler(sglWorlOut){
     setWorkout((prev)=>[...prev,sglWorlOut]);
   }
   function handleSaveForDay(){
+    setInitialWorkOut(false);
+    // setFirstInitial(false);
     setIsSaved(true);
     setDeleteBtn(false);
     const forSingleDay={
@@ -82,14 +95,25 @@ function AddWorkout({ day, addSingleDayRoutine, index,exercises, initialWorkouts
             <Calendar className="h-5 w-5 text-muted-foreground" />
             <h4 className="text-lg font-medium text-card-foreground">{day}</h4>
           </div>
-          <button
+          <div className="flex gap-x-5">
+           {editInitialWorkOut &&
+            <button className="flex items-center space-x-2 px-3 py-2  text-red-300  hover:text-primary-foreground hover:bg-yellow-400 rounded-md transition-colors duration-200"
             type="button"
-            onClick={() => setAddExercise(true)}
-            className="flex items-center space-x-2 px-3 py-2 text-primary hover:text-primary-foreground hover:bg-primary/90 rounded-md transition-colors duration-200"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Add Workout</span>
-          </button>
+            onClick={handleEditInitialWorkOut}
+            >
+              <Pen className="h-4 w-4"></Pen>
+              <span>Want to Edit</span>
+            </button>}
+            <button
+              type="button"
+              onClick={() => setAddExercise(true)}
+              className="flex items-center space-x-2 px-3 py-2 text-primary hover:text-primary-foreground hover:bg-primary/90 rounded-md transition-colors duration-200"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Add Workout</span>
+            </button>
+          </div>
+          
         </div>
         {addExercise && (
           <div className="flex flex-col gap-y-2">
@@ -132,10 +156,9 @@ function AddWorkout({ day, addSingleDayRoutine, index,exercises, initialWorkouts
         {currDayExercise.length > 0 ? (
           <div className="">
             {currDayExercise.map((initialExercise,index)=>{
-              const result = exercises.filter(ex => ex.id == initialExercise.id);
               return (
                 <div key={index}>
-                   <AddSets key={index} ex={initialExercise} deleteWorkOut={deleteWorkOut} addWorkOutHandler={addWorkOutHandler} deleteBtn={deleteBtn} exDetail={result[0]} />
+                   <AddSets key={index} ex={initialExercise} deleteWorkOut={deleteWorkOut} addWorkOutHandler={addWorkOutHandler} deleteBtn={deleteBtn} exDetail={capabilites} />
                 </div>
                 )
             })}

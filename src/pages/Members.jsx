@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar.jsx';
 import MemberEditModal from '../components/MemberEditModal.jsx';
 import { membersApi } from '../mocks/mockApi.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMembers } from '../serviceFunctions/userRelatedFunc.js';
+import { getMembers, updateUserDetail } from '../serviceFunctions/userRelatedFunc.js';
 import { setUsers } from '../redux/slices/dataSlice.js';
 import { useNavigate } from 'react-router-dom';
 
@@ -44,7 +44,7 @@ const Members = () => {
     }
   }, [searchTerm, members]);
 
-  console.log("Members is",members)
+  // console.log("Members is",members)
 
   const handleEditMember = (member) => {
     setSelectedMember(member);
@@ -53,10 +53,16 @@ const Members = () => {
 
   const handleSaveMember = async (memberId, updatedData) => {
     try {
-      await membersApi.update(memberId, updatedData);
-      await loadMembers(); // Refresh the list
+      // console.log("Member Id is",memberId,"Updated Data",updatedData);
+      const res= await updateUserDetail(memberId , updatedData)
       setIsEditModalOpen(false);
       setSelectedMember(null);
+      if(res){
+        const data=await getMembers();
+        dispatch(setUsers(data))
+        setMembers(data)
+      }
+      
     } catch (error) {
       console.error('Failed to update member:', error);
     }

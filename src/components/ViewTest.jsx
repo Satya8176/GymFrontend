@@ -7,50 +7,31 @@ function ViewTest({ exercisesTested,reTest,enrollmentId}) {
 
   return (
     <div>
-      {exercisesTested.length > 0 ? (
+      {exercisesTested ? (
         <div className="rounded-t-sm overflow-hidden mt-2">
-          <table className=" min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700 ">
-              <tr className="rounded-lg">
-                <th className="px-6 py-1.5 w-[25%] text-left text-[14px] text-gray-500 dark:text-gray-200 tracking-wider">
-                  Exercise
-                </th>
-                <th className="px-6 py-1.5 w-[25%] text-left text-[14px] text-gray-500 dark:text-gray-200 tracking-wider">
-                  Max Weight
-                </th>
-                <th className="px-6 py-1.5 w-[25%] text-left text-[14px] text-gray-500 dark:text-gray-200 tracking-wider">
-                  Max Reps
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {exercisesTested.map((obj, index) => (
-                <motion.tr
-                  key={index}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 "
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <td className="px-6 py-1.5 w-[25%] whitespace-nowrap">
-                    <div className="text-[14px] font-medium text-gray-900 dark:text-white">
-                      {obj.name || obj.exercise.name}
-                    </div>
-                  </td>
-                  <td className="px-6 py-1.5 w-[25%] whitespace-nowrap">
-                    <div className="text-[14px] font-medium text-gray-900 dark:text-white">
-                      {obj.maxWeight} KG
-                    </div>
-                  </td>
-                  <td className="px-6 py-1.5 w-[25%] whitespace-nowrap">
-                    <div className="text-[14px] font-medium text-gray-900 dark:text-white">
-                      {obj.maxReps}
-                    </div>
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="space-y-2">
+              {/* {combinedTests.map((t) => ( */}
+                {exercisesTested && <div className="flex items-center justify-between bg-muted/30 p-3 rounded">
+                  <div>
+                    <div className="text-base">Global Max Weight</div>
+                  </div>
+                  <div className="text-sm text-slate-400 font-bold">
+                     {`${exercisesTested.maxWeight} KG`}
+                  </div>
+                </div>}
+
+                {exercisesTested && <div className="flex items-center justify-between bg-muted/30 p-3 rounded">
+                  <div>
+                    <div className="text-base">Global Max Reps</div>
+                    
+                  </div>
+                  <div className="text-sm text-slate-400 font-bold">
+                     {`${exercisesTested.maxReps} reps`}
+                  </div>
+                </div>}
+
+              {/* ))} */}
+            </div>
           <button className={`w-fit h-fit text-black font-bold hover:text-yellow-900 py-1 px-2 bg-yellow-400 rounded-sm hover:scale-95 mt-3 ${reTest ?(""):("hidden")} relative`}
           type="button"
           // How i can navigate so that it take restest 
@@ -70,3 +51,72 @@ function ViewTest({ exercisesTested,reTest,enrollmentId}) {
 }
 
 export default ViewTest;
+
+
+// {/* <div className="space-y-2">
+
+              
+//               {/* {combinedTests.map((t) => ( */}
+//                 {weightTest && <div className="flex items-center justify-between bg-muted/30 p-3 rounded">
+//                   <div>
+//                     <div className="font-semibold">Global Max Weight</div>
+//                   </div>
+//                   <div className="text-sm text-slate-400 font-bold">
+//                      {`${weightTest.maxWeight} KG`}
+//                   </div>
+//                   <div className="flex gap-2">
+//                     <button
+//                       type="button"
+//                       onClick={() => (removeWeightTest())}
+//                       className="px-2 py-1 text-red-600 bg-red-100 rounded"
+//                     >
+//                       Remove
+//                     </button>
+//                     <button
+//                       type="button"
+//                       onClick={() => {
+//                         // allow editing by pre-filling selection/input
+//                         // setSelectedWeightEx({ id: t.exerciseId.toString(), name: t.name });
+//                         // formRef.current.maxWeight = t.maxWeight;
+//                         setShowWeightInput(true);
+//                       }}
+//                       className="px-2 py-1 text-white bg-gray-700 rounded"
+//                     >
+//                       Edit
+//                     </button>
+//                   </div>
+//                 </div>}
+
+//                 {repsTest && <div className="flex items-center justify-between bg-muted/30 p-3 rounded">
+//                   <div>
+//                     <div className="font-semibold">Global Max Reps</div>
+                    
+//                   </div>
+//                   <div className="text-sm text-slate-400 font-bold">
+//                      {`${repsTest.maxReps} reps`}
+//                   </div>
+//                   <div className="flex gap-2">
+//                     <button
+//                       type="button"
+//                       onClick={() => (removeRepsTest())}
+//                       className="px-2 py-1 text-red-600 bg-red-100 rounded"
+//                     >
+//                       Remove
+//                     </button>
+//                     <button
+//                       type="button"
+//                       onClick={() => {
+//                         // allow editing by pre-filling selection/input
+//                           // setSelectedRepsEx({ id: t.exerciseId.toString(), name: t.name });
+//                           // formRef.current.maxReps = t.maxReps;
+//                           setShowRepsInput(true);
+//                       }}
+//                       className="px-2 py-1 text-white bg-gray-700 rounded"
+//                     >
+//                       Edit
+//                     </button>
+//                   </div>
+//                 </div>}
+
+//               {/* ))} */}
+//             </div> */}

@@ -4,15 +4,16 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: '0.0.0.0',              // allows external access (needed for ngrok)
+    host: '0.0.0.0',
     port: 5173,
-    allowedHosts: ['.ngrok-free.app'], // ✅ allows any ngrok subdomain
+    allowedHosts: ['.ngrok-free.app'],
     hmr: {
-      clientPort: 443,           // ensures HMR works over HTTPS
-      protocol: 'wss',           // secure websocket for ngrok
+      clientPort: 5173,  // use your actual dev port
+      protocol: 'ws',    // normal websocket, not secure
     },
   },
 });
+
 
 
 

@@ -205,5 +205,26 @@ export const UserAvailableExercises=(dataArray)=>{
 }
 
 
+export const updateUserDetail=async(userId,data)=>{
+  try{
+    const fd=new FormData();
+    fd.append("userId",userId);
+    fd.append("data",JSON.stringify(data));
+    const res= await axios.post(
+      "http://localhost:4000/api/user/update-User-Detail",
+      fd
+    )
+    if (res.status !== 200) throw new Error(res.data?.message || "User detail updation error");
+    toast.success("Update Sucessfull")
+    return true;
+  }
+  catch(err){
+    const msg=err?.response?.data?.message ||"User detail updation error"
+    console.log("This is the error",msg);
+    toast.error(msg);;
+  }
+}
+
+
 
 //From here we need to create rotuine function

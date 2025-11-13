@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 import TakeTest from '../components/TakeTest'
+import Taketes from '../components/Taketes'
 import ViewTest from '../components/ViewTest'
 import { motion } from "framer-motion";
 import { useLocation } from 'react-router-dom';
@@ -20,9 +21,16 @@ function TestLanding() {
     const run=async()=>{
       const res=await getSingleUser(enrollmentId);
       setUser(res);
-      const userTests=await fetchUserTests(enrollmentId);
-      const newTests=flattenExerciseList(userTests)
-      setTestEntries(newTests);
+      if (whichPage !== 'take-test') {
+        const userTests = await fetchUserTests(enrollmentId);
+        console.log("Test Landing ",userTests);
+        const obj={
+          "maxWeight":userTests.maxWeight,
+          "maxReps":userTests.maxReps
+        }
+        // const newTests = flattenExerciseList(userTests);
+        setTestEntries(obj);
+      }
       setLoading(false);
     }
     run();
@@ -64,7 +72,7 @@ function TestLanding() {
             </div>
           </motion.div>
           {
-            whichPage==="take-test"?(<TakeTest enrollmentId={enrollmentId}></TakeTest>):(<ViewTest exercisesTested={testEntries} reTest={true} enrollmentId={enrollmentId}></ViewTest>)
+            whichPage==="take-test"?(<Taketes enrollmentId={enrollmentId}></Taketes>):(<ViewTest exercisesTested={testEntries} reTest={true} enrollmentId={enrollmentId}></ViewTest>)
           }
           {/* {
             user && user?.testDone ?(<ViewTest exercisesTested={testEntries} reTest={true}></ViewTest>):(<TakeTest enrollmentId={enrollmentId}></TakeTest>)

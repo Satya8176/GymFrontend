@@ -23,7 +23,8 @@ const CreateRoutine = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const memberInputRef = useRef(null);
-  const [availableExercise,setAvailableExercise]=useState();
+  const [availableExercise,setAvailableExercise]=useState(exercises);
+  const [editInitialWorkOut,setInitialWorkOut]=useState(true);
 
   const [showTestTable,setShowTestTable]=useState();
   
@@ -51,10 +52,14 @@ const CreateRoutine = () => {
   useEffect(()=>{
     const run=async()=>{
       const data=await fetchUserTests(selectedMember);
-      const newData=flattenExerciseList(data);
-      const exer=UserAvailableExercises(data);
-      setShowTestTable(newData);
-      setAvailableExercise(exer);
+      // const newData=flattenExerciseList(data);
+      // const exer=UserAvailableExercises(data);
+      const obj={
+        "maxWeight":data.maxWeight,
+        "maxReps":data.maxReps
+      }
+      setShowTestTable(obj);
+      setAvailableExercise(exercises);
     }
     if(selectedMember){
       console.log("seleted mem",selectedMember)
@@ -79,6 +84,9 @@ const CreateRoutine = () => {
         const data=await getMembers();
         dispatch(setUsers(data))
         setMembers(data)
+        const data2=await getAllExercise();
+        dispatch(setAllExercises(data2))
+        setExercises(data2)
       }
       run();
     }
@@ -91,7 +99,7 @@ const CreateRoutine = () => {
 
   function addSingleDayRoutine(obj){
     // obj -> { day: 'Monday', workouts: [...] }
-    console.log("SIngle day workout in createRoutine",obj)
+    console.log("Single day workout in createRoutine",obj)
     // keep the existing array (for any other usage)
     setWeekRoutine((prev) => {
       // replace existing entry for same day if present
@@ -116,46 +124,99 @@ const CreateRoutine = () => {
     });
   }
 
+  function handleInitialEdit() {
+    setInitialWorkOut(false);
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!selectedMember || !routineName) return;
-    const obj={
-      "Member":selectedMember,
-      "Name":routineName,
-      "WeekRoutine":weekRoutine
-    }
-    console.log("Week Routine is",obj)
-    // Filter out empty days
-    const filteredDays = Object.entries(selectedDays).reduce((acc, [day, exercises]) => {
-      const validExercises = exercises.filter(ex => ex.id);
-      if (validExercises.length > 0) {
-        acc[day] = validExercises;
+
+    
+    // console.log("Week Routine is",weekRoutine);
+    const inDay=[];
+    for(let i of weekRoutine){
+      if(daysOfWeek.includes(i.day)){
+        inDay.push(i.day);
       }
-      return acc;
-    }, {});
+    }
+    const remainDay=[];
+    for(let i of daysOfWeek){
+      if(!inDay.includes(i)){
+        remainDay.push(i);
+      }
+    }
+    
+    for(let day of remainDay){
+      if(day === 'Day 4'){
+        for(let i of weekRoutine){
+          if(i.day === 'Day 1'){
+            let obj={
+              day:'Day 4',
+              workouts:i.workouts
+            }
+            weekRoutine.push(obj);
+            break;
+          }
+        }
+      }
+      if(day === 'Day 5'){
+        for(let i of weekRoutine){
+          if(i.day === 'Day 2'){
+            let obj={
+              day:'Day 5',
+              workouts:i.workouts
+            }
+            weekRoutine.push(obj);
+            break;
+          }
+        }
+      }
+      if(day === 'Day 6'){
+        for(let i of weekRoutine){
+          if(i.day === 'Day 3'){
+            let obj={
+              day:'Day 6',
+              workouts:i.workouts
+            }
+            weekRoutine.push(obj);
+            break;
+          }
+        }
+      }
+    }
+    const newRoutine = weekRoutine.sort((a, b) => {
+      const dayA = parseInt(a.day.replace("Day ", ""), 10);
+      const dayB = parseInt(b.day.replace("Day ", ""), 10);
+      return dayA - dayB;
+    });
 
-    // if (Object.keys(filteredDays).length === 0) {
-    //   alert('Please add at least one exercise to one day.');
-    //   return;
-    // }
 
+    console.log("Week Routine is",newRoutine);
+
+    const pdfObj = {
+      Member: selectedMember,
+      Name: routineName,
+      WeekRoutine:newRoutine,
+    };
+    generateRoutinePdf(pdfObj);
     setSaving(true);
     try {
-      await routinesApi.create({
-        memberId: selectedMember,
-        name: routineName,
-        days: filteredDays
-      });
+      // NOTE: backend call intentionally omitted. Caller will send `payload` to backend later.
+
+      // Update local state to the normalized week routine so UI reflects what was "saved"
+      // setWeekRoutine(newWeekRoutine.length > 0 ? newWeekRoutine : weekRoutine);
+
+      // Reset form fields
+      setSelectedMember('');
+      setRoutineName('');
+      setSelectedDays({});
+
+      // Generate printable routine based on normalized week routine
       
-  // Reset form
-  setSelectedMember('');
-  setRoutineName('');
-  setSelectedDays({});
-  // After successful save, generate a printable view based on the `obj` (Member, Name, WeekRoutine)
-  generateRoutinePdf(obj);
-    } catch (error) {
-      console.error('Failed to create routine:', error);
+    } catch (err) {
+      console.error('Error while preparing routine:', err);
     } finally {
       setSaving(false);
     }
@@ -337,10 +398,55 @@ const CreateRoutine = () => {
                   />
                 </div>
               </div>
-              <div className='text-xl py-3'>
-                {
-                  selectedMember && showTestTable ? (<ViewTest exercisesTested={showTestTable} reTest={false}/>):(<div className='text-slate-300 font-bold text-xl'></div>)
-                }
+              <div className='text-xl pt-3'>
+                {selectedMember && (
+                  <div className="mt-4 bg-muted p-4 rounded-lg border border-border">
+                    {(() => {
+                      const selected = members.find(
+                        (m) => m.enrollmentId === selectedMember
+                      );
+                      if (!selected) return null;
+                      return (
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
+                          <p>
+                            <strong>Height:</strong>{" "}
+                            {selected.height ? `${selected.height} cm` : "N/A"}
+                          </p>
+                          <p>
+                            <strong>Weight:</strong>{" "}
+                            {selected.weight ? `${selected.weight} kg` : "N/A"}
+                          </p>
+                          {/* <p>
+                            <strong>BMI:</strong> {(selected.weight / ((selected.height / 100) ** 2)).toFixed(2)}
+                          </p> */}
+                          <p>
+                            <strong>Age:</strong> {selected.age || "N/A"}
+                          </p>
+                          <p>
+                            <strong>Gender:</strong> {selected.gender || "N/A"}
+                          </p>
+                        </div>
+                      );
+                    })()}
+                    {selectedMember && showTestTable && 
+                    <div className='bg-muted  mt-3'>
+                      {/* <div className='text-base text-slate-300 font-bold '>Capabilities</div> */}
+                      <div className='flex text-sm justify-between text-muted-foreground '>
+                        <div className='flex w-[50%] gap-x-2'>
+                          <div className='font-semibold'>Global Maximum Weight : </div>
+                          <div>{`${showTestTable.maxWeight} KG`}</div>
+                        </div>
+                        <div className='flex w-[50%] gap-x-2'>
+                          <div className='font-semibold'>Global Maximum Reps: </div>
+                          <div>{`${showTestTable.maxReps} Reps`}</div>
+                        </div>
+                      </div>
+                    </div>}
+                    
+
+                  </div>
+                )}
+                
               </div>
             </div>
               
@@ -351,8 +457,9 @@ const CreateRoutine = () => {
               
               { 
                 <div className="space-y-6">
-                {daysOfWeek.map((day,index) => (
-                  <AddWorkout
+                {daysOfWeek.map((day,index) => {
+                  let res=(day === 'Day 4' || day === 'Day 5' || day === 'Day 6') && editInitialWorkOut;
+                  return (<AddWorkout
                     key={day}
                     day={day}
                     index={index}
@@ -360,8 +467,11 @@ const CreateRoutine = () => {
                     initialWorkouts={selectedDays[day] || []}
                     selectedMember={selectedMember}
                     exercises={availableExercise}
-                  />
-                ))}
+                    capabilites={showTestTable}
+                    editInitialWorkOut={res}
+                    handleInitialEdit={handleInitialEdit}
+                  />)
+                })}
               </div>}
             </div>
 

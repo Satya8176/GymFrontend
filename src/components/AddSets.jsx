@@ -7,7 +7,7 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn,exDetail}) {
   // console.log("Exerise in set is",ex)
 
   const formRef = useRef({
-      setNo: "",
+      setNo: 0,
       weight: "",
       reps: "",
     });
@@ -26,6 +26,7 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn,exDetail}) {
   const [percentReps, setPercentReps] = useState('');
   const [weightValue, setWeightValue] = useState('');
   const [repsValue, setRepsValue] = useState('');
+  const [addSetVisiblity,setAddSetVisibility]=useState(false);
 
   // Initialize from ex.sets when provided (duplicated days)
   useEffect(() => {
@@ -42,6 +43,7 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn,exDetail}) {
     setShowSets(value);
   }
   function setAddSetHandler(){
+    setAddSetVisibility(true);
     setAddSets(!addSets);
   }
   function parseNumber(val) {
@@ -73,9 +75,8 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn,exDetail}) {
       "sets":sets
     }
     setIsSaved(true)
-    // console.log("Single workout is",workout)
-    // setWorkouts((prev)=> [...prev, workout])
     addWorkOutHandler(workout);
+    setAddSetVisibility(false);
   }
   return (
     <div className="flex flex-col px-6 py-3 text-left text-base text-gray-500 dark:text-gray-200 tracking-wider dark:bg-slate-900 my-2 rounded-lg">
@@ -170,20 +171,12 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn,exDetail}) {
             )
           )
         }
-        {addSets && (
+        {(addSets && addSetVisiblity) && (
         <div className="flex gap-x-3 my-3 py-1 px-2 items-center rounded-lg border-2 dark:border-slate-500 border-slate-400">
-          <div className="flex flex-row gap-2 items-center">
-            <label className="block text-sm font-medium text-card-foreground ">
-              SetNo.
-            </label>
-            <input
-              type="text"
-              onChange={(e) => {
-                formRef.current.setNo = e.target.value;
-              }}
-              className="w-[20%] px-1 py-1 bg-input text-center rounded-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-              placeholder="1"
-            />
+          <div className="flex flex-row gap-2 items-center w-[20%]">
+            <div className="block text-sm font-medium text-card-foreground">
+                SetNo.
+            </div>
           </div>
 
           <div className="flex flex-row gap-2 items-center">
@@ -267,6 +260,7 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn,exDetail}) {
             className="w-[10%] h-fit text-blue-700 hover:font-bold hover:text-blue-900 py-1 px-2 bg-blue-400 rounded-sm hover:scale-95 "
             onClick={() => {
               // push a shallow copy of the ref object so each entry is independent
+              formRef.current.setNo =formRef.current.setNo + 1;
               setSets((prev) => [...prev, { ...formRef.current }]);
               // mark that sets should be shown
               setShowSetsHandler(true);
@@ -291,6 +285,7 @@ function AddSets({ex,deleteWorkOut,addWorkOutHandler,deleteBtn,exDetail}) {
       hover:scale-95 mt-2 ml-[94%] ${sets.length===0 || isSaved?("hidden"):("")}`}
       onClick={()=>{handleSaveBtn()}}
       type="button"
+
       >Save</button>
     </div>
   )

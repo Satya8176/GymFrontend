@@ -3,11 +3,11 @@ import { Plus, Minus, Save, Calendar, Cross, ArrowDown, ChevronDown, CloudCog } 
 import Navbar from "./Navbar.jsx";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import { createTestFun, getAllExercise } from "../serviceFunctions/userRelatedFunc.js";
-import { setAllExercises } from "../redux/slices/dataSlice.js";
+import { createTestFun, getAllExercise, getMembers } from "../serviceFunctions/userRelatedFunc.js";
+import { setAllExercises, setUsers } from "../redux/slices/dataSlice.js";
 import ViewTest from "./ViewTest.jsx";
 
-function TakeTest({ enrollmentId }) {
+function Taketes({ enrollmentId }) {
   const dispatch = useDispatch();
   const { totalExercies } = useSelector((state) => state.dataSlice);
   const [exercises, setExercises] = useState(totalExercies || []);
@@ -49,8 +49,8 @@ function TakeTest({ enrollmentId }) {
     const val = formRef.current.maxWeight?.toString().trim();
     if (!val) return alert("Enter max weight.");
     setWeightTest({
-      exerciseId: parseInt(selectedWeightEx.id),
-      name: selectedWeightEx.name,
+      // exerciseId: parseInt(selectedWeightEx.id),
+      // name: selectedWeightEx.name,
       maxWeight: val,
     });
     // hide input and reset selection input value
@@ -65,8 +65,8 @@ function TakeTest({ enrollmentId }) {
     const val = formRef.current.maxReps?.toString().trim();
     if (!val) return alert("Enter max reps.");
     setRepsTest({
-      exerciseId: parseInt(selectedRepsEx.id),
-      name: selectedRepsEx.name,
+      // exerciseId: parseInt(selectedRepsEx.id),
+      // name: selectedRepsEx.name,
       maxReps: val,
     });
     setShowRepsInput(false);
@@ -82,23 +82,34 @@ function TakeTest({ enrollmentId }) {
   }
 
   async function createTestHandle() {
-    const entries = [];
-    if (weightTest) entries.push({ testType: "weight", exerciseId: weightTest.exerciseId, name: weightTest.name, maxWeight: weightTest.maxWeight });
-    if (repsTest) entries.push({ testType: "reps", exerciseId: repsTest.exerciseId, name: repsTest.name, maxReps: repsTest.maxReps });
+    // const entries = [];
+    // if (weightTest) entries.push({ testType: "weight", exerciseId: weightTest.exerciseId, name: weightTest.name, maxWeight: weightTest.maxWeight });
+    // if (repsTest) entries.push({ testType: "reps", exerciseId: repsTest.exerciseId, name: repsTest.name, maxReps: repsTest.maxReps });
 
-    if (entries.length === 0) return alert("No tests to save.");
+    // if (entries.length === 0) return alert("No tests to save.");
 
-    const obj = {
-      userId: enrollmentId,
-      testEntries: entries,
-    };
+    // const obj = {
+    //   userId: enrollmentId,
+    //   testEntries: entries,
+    // };
+    // console.log("first")
+    const obj={
+      userId:enrollmentId,
+      testEntries:{
+        "maxWeight":weightTest.maxWeight,
+        "maxReps":repsTest.maxReps
+      }
+    }
+    // console.log("take test objext",obj)
     await createTestFun(obj);
+    const data=await getMembers();
+    dispatch(setUsers(data))
   }
 
-  const combinedTests = [
-    ...(weightTest ? [{ testType: "weight", ...weightTest }] : []),
-    ...(repsTest ? [{ testType: "reps", ...repsTest }] : []),
-  ];
+  // const combinedTests = [
+  //   ...(weightTest ? [{ testType: "weight", ...weightTest }] : []),
+  //   ...(repsTest ? [{ testType: "reps", ...repsTest }] : []),
+  // ];
 
   return (
     <div>
@@ -131,7 +142,7 @@ function TakeTest({ enrollmentId }) {
                 ))}
               </select>
 
-              {showWeightInput && selectedWeightEx && (
+              {showWeightInput && (
                 <div className="mt-3 flex items-center gap-2">
                   <input
                     type="text"
@@ -177,7 +188,7 @@ function TakeTest({ enrollmentId }) {
                 ))}
               </select>
 
-              {showRepsInput && selectedRepsEx && (
+              {showRepsInput && (
                 <div className="mt-3 flex items-center gap-2">
                   <input
                     type="text"
@@ -197,20 +208,22 @@ function TakeTest({ enrollmentId }) {
 
         {/* show recorded global tests */}
         <div className="mt-4">
-          {combinedTests.length > 0 ? (
+          {weightTest || repsTest ? (
             <div className="space-y-2">
-              {combinedTests.map((t) => (
-                <div key={t.testType} className="flex items-center justify-between bg-muted/30 p-3 rounded">
+
+              
+              {/* {combinedTests.map((t) => ( */}
+                {weightTest && <div className="flex items-center justify-between bg-muted/30 p-3 rounded">
                   <div>
-                    <div className="font-semibold">{t.testType === "weight" ? "Global Max Weight" : "Global Max Reps"}</div>
-                    <div className="text-sm text-slate-600">
-                      {t.name} — {t.testType === "weight" ? `${t.maxWeight} kg` : `${t.maxReps} reps`}
-                    </div>
+                    <div className="font-semibold">Global Max Weight</div>
+                  </div>
+                  <div className="text-sm text-slate-400 font-bold">
+                     {`${weightTest.maxWeight} KG`}
                   </div>
                   <div className="flex gap-2">
                     <button
                       type="button"
-                      onClick={() => (t.testType === "weight" ? removeWeightTest() : removeRepsTest())}
+                      onClick={() => (removeWeightTest())}
                       className="px-2 py-1 text-red-600 bg-red-100 rounded"
                     >
                       Remove
@@ -219,23 +232,49 @@ function TakeTest({ enrollmentId }) {
                       type="button"
                       onClick={() => {
                         // allow editing by pre-filling selection/input
-                        if (t.testType === "weight") {
-                          setSelectedWeightEx({ id: t.exerciseId.toString(), name: t.name });
-                          formRef.current.maxWeight = t.maxWeight;
-                          setShowWeightInput(true);
-                        } else {
-                          setSelectedRepsEx({ id: t.exerciseId.toString(), name: t.name });
-                          formRef.current.maxReps = t.maxReps;
-                          setShowRepsInput(true);
-                        }
+                        // setSelectedWeightEx({ id: t.exerciseId.toString(), name: t.name });
+                        // formRef.current.maxWeight = t.maxWeight;
+                        setShowWeightInput(true);
                       }}
                       className="px-2 py-1 text-white bg-gray-700 rounded"
                     >
                       Edit
                     </button>
                   </div>
-                </div>
-              ))}
+                </div>}
+
+                {repsTest && <div className="flex items-center justify-between bg-muted/30 p-3 rounded">
+                  <div>
+                    <div className="font-semibold">Global Max Reps</div>
+                    
+                  </div>
+                  <div className="text-sm text-slate-400 font-bold">
+                     {`${repsTest.maxReps} reps`}
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => (removeRepsTest())}
+                      className="px-2 py-1 text-red-600 bg-red-100 rounded"
+                    >
+                      Remove
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        // allow editing by pre-filling selection/input
+                          // setSelectedRepsEx({ id: t.exerciseId.toString(), name: t.name });
+                          // formRef.current.maxReps = t.maxReps;
+                          setShowRepsInput(true);
+                      }}
+                      className="px-2 py-1 text-white bg-gray-700 rounded"
+                    >
+                      Edit
+                    </button>
+                  </div>
+                </div>}
+
+              {/* ))} */}
             </div>
           ) : (
             <div className="p-2 text-slate-700 dark:text-slate-400">No capabilities recorded yet</div>
@@ -244,10 +283,10 @@ function TakeTest({ enrollmentId }) {
 
         <div className="mt-4">
           <button
-            className={`w-fit text-black font-bold py-1 px-3 bg-green-400 rounded-sm hover:scale-95 ${combinedTests.length === 0 ? 'opacity-60 pointer-events-none' : ''}`}
+            className={`w-fit text-black font-bold py-1 px-3 bg-green-400 rounded-sm hover:scale-95`}
             type="button"
             onClick={createTestHandle}
-            disabled={combinedTests.length === 0}
+            disabled={!repsTest && !weightTest}
           >
             Save Test
           </button>
@@ -262,4 +301,4 @@ function TakeTest({ enrollmentId }) {
   );
 }
 
-export default TakeTest;
+export default Taketes;
